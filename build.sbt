@@ -8,5 +8,6 @@ scalaVersion := "2.9.1"
 
 libraryDependencies ++= Seq (
   "org.scalaz" %% "scalaz-core" % "6.0.3",
-  "commons-codec" % "commons-codec" % "1.4"
+  "commons-codec" % "commons-codec" % "1.4",
+  "commons-io" % "commons-io" % "2.1"
 )
