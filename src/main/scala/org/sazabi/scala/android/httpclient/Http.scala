@@ -1,26 +1,25 @@
-package org.sazabi.lib.android.httpclient
+package org.sazabi.scala.android.httpclient
 
 import scala.collection.JavaConverters._
 import scala.util.control.Exception._
 
 import java.io.{BufferedReader, InputStream, InputStreamReader}
 
-import org.apache.commons.io.IOUtils
-
 import android.content.Context
 import android.net.{http, Uri}
 import http.AndroidHttpClient
 
-import org.apache.http.{client, message, HttpResponse, HttpStatus}
+import org.apache.http.{client, message, util, HttpResponse, HttpStatus}
 import client.{entity, methods, ResponseHandler}
 import message.BasicNameValuePair
+import util.EntityUtils
 import entity.UrlEncodedFormEntity
 import methods.{HttpGet, HttpPost, HttpUriRequest}
 
 import scalaz._
 import Scalaz._
 
-import org.sazabi.lib.Log._
+import org.sazabi.scala.Log._
 
 object Http extends Loggable {
   def apply(url: String, c: Context = null) = Request(url, c, Request.get _)
@@ -68,9 +67,9 @@ object Http extends Loggable {
             val is = r.getEntity().getContent()
             st.getStatusCode() match {
               case code if code > HttpStatus.SC_BAD_REQUEST =>
-                HttpException(code, st.getReasonPhrase(), IOUtils.toString(is))
-                  .fail.liftFailNel
-              case _ => f(is).success
+                HttpException(code, st.getReasonPhrase(),
+                  EntityUtils.toString(r.getEntity())).fail.liftFailNel
+              case _ => f(r.getEntity().getContent()).success
             }
           } catch {
             case e => e.fail.liftFailNel
@@ -86,7 +85,7 @@ object Http extends Loggable {
           new StringBuilder().append("POST ")
             .append(post.getURI().toString())
             .append(" [")
-            .append(IOUtils.toString(post.getEntity().getContent()))
+            .append(EntityUtils.toString(post.getEntity()))
             .append("]")
             .toString)
       }
