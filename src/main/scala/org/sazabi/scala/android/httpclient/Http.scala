@@ -64,7 +64,6 @@ object Http extends Loggable {
         override def handleResponse(r: HttpResponse): Result[A] =
           try {
             val st = r.getStatusLine()
-            val is = r.getEntity().getContent()
             st.getStatusCode() match {
               case code if code > HttpStatus.SC_BAD_REQUEST =>
                 HttpException(code, st.getReasonPhrase(),
