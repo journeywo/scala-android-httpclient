@@ -65,7 +65,7 @@ object Http extends Loggable {
           try {
             val st = r.getStatusLine()
             st.getStatusCode() match {
-              case code if code > HttpStatus.SC_BAD_REQUEST =>
+              case code if code >= HttpStatus.SC_BAD_REQUEST =>
                 HttpException(code, st.getReasonPhrase(),
                   EntityUtils.toString(r.getEntity())).fail.liftFailNel
               case _ => f(r.getEntity().getContent()).success
